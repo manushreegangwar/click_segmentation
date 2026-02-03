@@ -1,0 +1,11 @@
+name: "@51labs/click-segmentation"
+description: FiftyOne Labs panel for image segmentation via point prompts
+version: 1.0.0
+fiftyone:
+  version: "*"
+url: https://github.com/manushreegangwar/click-segmentation
+license: Apache 2.0
+operators:
+  - save_keypoints
+  - segment_with_keypoints
+js_bundle: dist/index.umd.js
