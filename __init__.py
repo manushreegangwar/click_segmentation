@@ -23,15 +23,18 @@ class SaveKeypoints(foo.Operator):
             label="Keypoints",
         )
         inputs.str("field_name", default="user_clicks", label="Field Name")
+        inputs.str("label_name", default="label", label="Label Name")
         return types.Property(inputs)
 
     def execute(self, ctx):
         sample_id = ctx.params["sample_id"]
         keypoints = ctx.params["keypoints"]
         field_name = ctx.params["field_name"]
+        label_name = ctx.params["label_name"]
 
         dataset = ctx.dataset
         sample = dataset[sample_id]
+        keypoint = fo.Keypoint(points=keypoints, label=label_name)
 
         if sample.has_field(field_name) and sample[field_name] is not None:
             num_kpts = len(sample[field_name].keypoints)
@@ -39,10 +42,8 @@ class SaveKeypoints(foo.Operator):
                 f"Appending keypoints to {field_name} with {num_kpts} existing keypoints.",
                 variant="warning",
             )
-            keypoint = fo.Keypoint(points=keypoints, label=f"click_{num_kpts}")
             sample[field_name].keypoints.append(keypoint)
         else:
-            keypoint = fo.Keypoint(points=keypoints, label="click_0")
             sample[field_name] = fo.Keypoints(keypoints=[keypoint])
         sample.save()
 
@@ -87,6 +88,8 @@ class SegmentWithKeypoints(foo.Operator):
             f"Segmentation saved to {label_field}",
             variant="success",
         )
+
+        ctx.ops.reload_dataset()
 
 
 def register(p):

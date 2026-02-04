@@ -15,6 +15,7 @@ export function ClickSegmentation() {
   const [clicks, setClicks] = useState([]);
   const [fieldName, setFieldName] = useState("user_clicks");
   const [modelName, setModelName] = useState("segment-anything-2-hiera-small-image-torch");
+  const [labelName, setLabelName] = useState("label");
   const imageRef = useRef(null);
   const containerRef = useRef(null);
 
@@ -66,7 +67,7 @@ export function ClickSegmentation() {
     const sampleId = modalSample.sample._id;
     const keypointCoords = clicks.map(click => [
       click.normalizedX,
-      click.normalizedY
+      click.normalizedY,
     ]);
     
     try {
@@ -75,7 +76,8 @@ export function ClickSegmentation() {
         {
           sample_id: sampleId,
           keypoints: keypointCoords,
-          field_name: fieldName.trim()
+          field_name: fieldName.trim(),
+          label_name: labelName.trim()
         }
       );
       setClicks([]);
@@ -134,7 +136,7 @@ export function ClickSegmentation() {
       <div 
         ref={containerRef}
         style={{ 
-          width: "100%", 
+          width: "auto", 
           height: "800px",
           position: "relative",
           backgroundColor: "#1e1e1e",
@@ -204,6 +206,36 @@ export function ClickSegmentation() {
             value={fieldName}
             onChange={(e) => setFieldName(e.target.value)}
             placeholder="e.g., user_clicks, keypoints"
+            style={{
+              padding: "8px 12px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              fontSize: "14px",
+              fontFamily: "monospace"
+            }}
+          />
+        </label>
+      </div>
+
+      {/* Keypoint Label Name Input */}
+      <div style={{ 
+        marginBottom: "8px", 
+        padding: "4px",
+      }}>
+        <label style={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          gap: "8px",
+          fontSize: "14px"
+        }}>
+          <span style={{ fontSize: "14px", color: "#666" }}>
+            Label name for the current set of clicks
+          </span>
+          <input 
+            type="text"
+            value={labelName}
+            onChange={(e) => setLabelName(e.target.value)}
+            placeholder="e.g., animal, person"
             style={{
               padding: "8px 12px",
               border: "1px solid #ccc",
